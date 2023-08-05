@@ -13,4 +13,8 @@ Zakariya Osman
 - My next step is to connect the vsc to the maraidb
 - My current step is trying to display data
 
+- UPDATE
+- DONE CONNECTING TO DATABASE
+- DONE DISPLAYING DATA
+
 Update README.md - add your student info and next step
