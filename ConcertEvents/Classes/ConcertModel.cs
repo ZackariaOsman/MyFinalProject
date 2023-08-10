@@ -127,6 +127,59 @@ namespace ConcertEvents.Classes
                 connection.Close();
             }
         }
+        public List<ConcertModel> SearchConcerts(string query)
+        {
+            List<ConcertModel> searchResults = new List<ConcertModel>();
+
+            try
+            {
+                MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder()
+                {
+                    Server = "localhost",
+                    UserID = "root",
+                    Password = "password",
+                    Database = "ConcertEvents",
+                };
+
+                MySqlConnection connection = new MySqlConnection(builder.ConnectionString);
+                connection.Open();
+
+                string searchStatement = "SELECT * FROM concert WHERE concert_artist LIKE @query OR concert_genre LIKE @query;";
+                MySqlCommand cmd = new MySqlCommand(searchStatement, connection);
+                cmd.Parameters.AddWithValue("@query", $"%{query}%");
+
+                using (MySqlDataReader dataReader = cmd.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        var concert = new ConcertModel
+                        {
+                            TicketCost = dataReader.GetInt32("concert_ticket_cost"),
+                            Genre = dataReader.GetString("concert_genre"),
+                            Artist = dataReader.GetString("concert_artist"),
+                            Date = dataReader.GetString("concert_date"),
+                            Time = dataReader.GetString("concert_time"),
+                            Venue = dataReader.GetString("concert_venue"),
+                            City = dataReader.GetString("concert_city"),
+                            Description = dataReader.GetString("concert_description")
+                        };
+
+                        searchResults.Add(concert);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                searchResults = null;
+            }
+
+            return searchResults;
+        }
+
+    
+        }
+
         
-    }
+    
 }

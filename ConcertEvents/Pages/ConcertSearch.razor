@@ -1,0 +1,106 @@
+﻿@page "/search"
+
+@using ConcertEvents.Classes
+
+<header>
+
+    <h1>Search for Concerts</h1>
+    <h5>Search for artist or by genre</h5>
+    <br>
+
+</header>
+
+<form method="get" @onsubmit="SearchConcerts">
+    <input type="text" name="query" @bind="searchStatement" placeholder="Enter search keyword" />
+    <button type="submit">Search</button>
+</form>
+
+@if (searchResults != null)
+{
+    <br>
+    @if (searchResults.Count == 0)
+    {
+        <p class="noresults">No results found.</p>
+    }
+    else
+    {
+        <div class="grid-container">
+            @foreach (var concert in searchResults)
+            {
+                <div class="concert-details">
+                    <h2 class="Ticket">Ticket Cost: @concert.TicketCost</h2>
+                    <p class="Genre">Genre: @concert.Genre</p>
+                    <p class="artist">Artist: @concert.Artist</p>
+                    <p class="Date">Date: @concert.Date</p>
+                    <p class="Time">Time: @concert.Time</p>
+                    <p class="Venue">Venue: @concert.Venue</p>
+                    <p class="City">City: @concert.City</p>
+                    <p class="Description">Description: @concert.Description</p>
+                </div>
+            }
+        </div>
+    }
+}
+
+<style>
+    header {
+        color: white;
+    }
+
+    .concert-details {
+        background-color: dimgrey;
+        border-radius: 5px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        margin: 10px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        color: black;
+    }
+
+    .concert-details:hover {
+        background-color: green;
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        background-color: black;
+        font-family: Arial, sans-serif;
+    }
+
+    .top-row.px-4 {
+        background-color: black;
+    }
+
+    .top-row.px-4 p {
+        margin-left: 0px;
+        color: white;
+    }
+    .noresults{
+        color:white;
+    }
+</style>
+
+@code {
+    private ConcertModel concertModel = new ConcertModel();
+    private string searchStatement = "";
+    private List<ConcertModel> searchResults;
+
+    protected override void OnInitialized()
+    {
+        LoadConcertData();
+    }
+
+    private void LoadConcertData()
+    {
+        concertModel.CreateDatabase();
+        concertModel.InsertDataFromSQLFile();
+        concertModel.LoadConcerts();
+    }
+
+    private void SearchConcerts()
+    {
+        searchResults = concertModel.SearchConcerts(searchStatement);
+    }
+}

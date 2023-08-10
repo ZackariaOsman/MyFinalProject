@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using ConcertEvents.Data;
 
 namespace ConcertEvents;
 
@@ -22,7 +21,6 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		builder.Services.AddSingleton<WeatherForecastService>();
 
 		return builder.Build();
 	}
