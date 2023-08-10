@@ -177,9 +177,9 @@ namespace ConcertEvents.Classes
             return searchResults;
         }
 
-    
-        }
 
-        
-    
+    }
+
+
+
 }
