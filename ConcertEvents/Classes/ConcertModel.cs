@@ -38,17 +38,25 @@ namespace ConcertEvents.Classes
                 Password = "password",
             };
 
-            using (MySqlConnection connection = new MySqlConnection(builder.ConnectionString))
+            try
             {
-                connection.Open();
-
-                string createDatabaseScript = "CREATE DATABASE IF NOT EXISTS ConcertEvents;";
-                using (MySqlCommand cmd = new MySqlCommand(createDatabaseScript, connection))
+                using (MySqlConnection connection = new MySqlConnection(builder.ConnectionString))
                 {
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+
+                    string createDatabaseScript = "CREATE DATABASE IF NOT EXISTS ConcertEvents;";
+                    using (MySqlCommand cmd = new MySqlCommand(createDatabaseScript, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
+            catch (MySqlException mySqlEx)
+            {
+                Console.WriteLine("MySQL Exception: " + mySqlEx.Message);
+            }
         }
+
         //Connects to ConcertEvent Database and with the use of the Assignment2.sql file populates it with data by splitting them and executing them individually.
         public void InsertDataFromSQLFile()
         {
@@ -64,24 +72,37 @@ namespace ConcertEvents.Classes
 
             using (MySqlConnection connection = new MySqlConnection(builder.ConnectionString))
             {
-                connection.Open();
-
-                string sqlFilePath = "C:\\Users\\osman\\source\\repos\\MyFinalProject\\ConcertEvents\\Assignment2.sql";
-                string sqlContent = File.ReadAllText(sqlFilePath);
-
-                string[] sqlStatements = sqlContent.Split(';');
-
-                foreach (string sqlStatement in sqlStatements)
+                try
                 {
-                    if (!string.IsNullOrWhiteSpace(sqlStatement))
+                    connection.Open();
+
+                    string sqlFilePath = "C:\\Users\\osman\\source\\repos\\MyFinalProject\\ConcertEvents\\Assignment2.sql";
+                    string sqlContent = File.ReadAllText(sqlFilePath);
+
+                    string[] sqlStatements = sqlContent.Split(';');
+
+                    foreach (string sqlStatement in sqlStatements)
                     {
-                        using (MySqlCommand cmd = new MySqlCommand(sqlStatement, connection))
+                        if (!string.IsNullOrWhiteSpace(sqlStatement))
                         {
-                            cmd.ExecuteNonQuery();
+                            using (MySqlCommand cmd = new MySqlCommand(sqlStatement, connection))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
                 }
+                catch (MySqlException mySqlEx)
+                {
+                    Console.WriteLine("MySQL Exception: " + mySqlEx.Message);
+                    allConcerts = null;
+                }
+                finally
+                {
+                    connection.Close();
+                }
             }
+            
         }
         //Connects to database and get concert data from concert table and adds data into the allConcert List above
         public void LoadConcerts()
@@ -125,9 +146,9 @@ namespace ConcertEvents.Classes
 
                 dataReader.Close();
             }
-            catch (Exception ex)
+            catch (MySqlException mySqlEx)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("MySQL Exception: " + mySqlEx.Message);
                 allConcerts = null;
             }
             finally
@@ -177,11 +198,12 @@ namespace ConcertEvents.Classes
                     }
                 }
             }
-            catch (Exception ex)
+            catch (MySqlException mySqlEx)
             {
-                Console.WriteLine(ex.Message);
-                searchResults = null;
+                Console.WriteLine("MySQL Exception: " + mySqlEx.Message);
+                allConcerts = null;
             }
+
 
             return searchResults;
         }
