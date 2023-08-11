@@ -7,7 +7,7 @@
     //Output: Coresponding Concert Events
 *@
 @using ConcertEvents.Classes
-
+@*HTML header*@
 <header>
 
     <h1>Search for Concerts</h1>
@@ -96,22 +96,14 @@
 @code {
     //creating and instance of ConcertModel to use methods and properties
     private ConcertModel concertModel = new ConcertModel();
+
     //empty searchStatement string to hold search query
     public string searchStatementt = "";
+
+    //Decalre list datatype:ConcertModel
     public List<ConcertModel> searchResults;
 
-    protected override void OnInitialized()
-    {
-        LoadConcertData();
-    }
-
-    public void LoadConcertData()
-    {
-        concertModel.CreateDatabase();
-        concertModel.InsertDataFromSQLFile();
-        concertModel.LoadConcerts();
-    }
-
+    //Puts search result into the SearchResults
     public void SearchConcerts()
     {
         searchResults = concertModel.SearchConcerts(searchStatementt);
