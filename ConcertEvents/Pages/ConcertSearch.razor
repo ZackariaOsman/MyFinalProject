@@ -1,5 +1,11 @@
 ﻿@page "/search"
-
+@*
+    //Name: Zakariya Osman
+    //Date: 2023-08-10
+    //Program Description: ConcertEvent Displayer. Display all or Search by Artist or Genre.
+    //Search Input: Artist Name or Genre
+    //Output: Coresponding Concert Events
+*@
 @using ConcertEvents.Classes
 
 <header>
@@ -10,11 +16,15 @@
 
 </header>
 
+@*Button and Search box*@
 <form method="get" @onsubmit="SearchConcerts">
-    <input type="text" name="query" @bind="searchStatement" placeholder="Enter search keyword" />
+    <input type="text" name="query" @bind="searchStatementt" placeholder="Enter Artist or Genre" />
     <button type="submit">Search</button>
 </form>
 
+@*Binding data to for output
+    Only shows anything if searchResults are not empty
+*@
 @if (searchResults != null)
 {
     <br>
@@ -42,6 +52,7 @@
     }
 }
 
+@*Some Css for style*@
 <style>
     header {
         color: white;
@@ -83,24 +94,26 @@
 </style>
 
 @code {
+    //creating and instance of ConcertModel to use methods and properties
     private ConcertModel concertModel = new ConcertModel();
-    private string searchStatement = "";
-    private List<ConcertModel> searchResults;
+    //empty searchStatement string to hold search query
+    public string searchStatementt = "";
+    public List<ConcertModel> searchResults;
 
     protected override void OnInitialized()
     {
         LoadConcertData();
     }
 
-    private void LoadConcertData()
+    public void LoadConcertData()
     {
         concertModel.CreateDatabase();
         concertModel.InsertDataFromSQLFile();
         concertModel.LoadConcerts();
     }
 
-    private void SearchConcerts()
+    public void SearchConcerts()
     {
-        searchResults = concertModel.SearchConcerts(searchStatement);
+        searchResults = concertModel.SearchConcerts(searchStatementt);
     }
 }

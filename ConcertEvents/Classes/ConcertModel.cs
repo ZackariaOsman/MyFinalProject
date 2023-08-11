@@ -1,12 +1,19 @@
-﻿using System;
+﻿//Name: Zakariya Osman
+//Date: 2023-08-10
+//Program Description: ConcertEvent Displayer. Display all or Search by Artist or Genre.
+//Search Input: Artist Name or Genre
+//Output: Coresponding Concert Events
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MySqlConnector;
-//
+
 namespace ConcertEvents.Classes
 {
+    //Properties for the ConcertModel with attributes of a concert event
     public class ConcertModel
     {
         public int TicketCost { get; set; }
@@ -18,9 +25,10 @@ namespace ConcertEvents.Classes
         public string City { get; set; }
         public string Description { get; set; }
 
+        //List to hold each concert instance
         public List<ConcertModel> allConcerts;
 
-
+        //Establishes a connection to the database and creates ConcertEvents database if it doesen't already exist
         public void CreateDatabase()
         {
             MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder()
@@ -41,7 +49,7 @@ namespace ConcertEvents.Classes
                 }
             }
         }
-
+        //Connects to ConcertEvent Database and with the use of the Assignment2.sql file populates it with data by splitting them and executing them individually.
         public void InsertDataFromSQLFile()
         {
             MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder()
@@ -75,7 +83,7 @@ namespace ConcertEvents.Classes
                 }
             }
         }
-
+        //Connects to database and get concert data from concert table and adds data into the allConcert List above
         public void LoadConcerts()
         {
             MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder()
@@ -127,6 +135,7 @@ namespace ConcertEvents.Classes
                 connection.Close();
             }
         }
+        //Based on the query it finds matching data which is saved to searchResults and returns it
         public List<ConcertModel> SearchConcerts(string query)
         {
             List<ConcertModel> searchResults = new List<ConcertModel>();
@@ -144,8 +153,8 @@ namespace ConcertEvents.Classes
                 MySqlConnection connection = new MySqlConnection(builder.ConnectionString);
                 connection.Open();
 
-                string searchStatement = "SELECT * FROM concert WHERE concert_artist LIKE @query OR concert_genre LIKE @query;";
-                MySqlCommand cmd = new MySqlCommand(searchStatement, connection);
+                string searchStatementt = "SELECT * FROM concert WHERE concert_artist LIKE @query OR concert_genre LIKE @query;";
+                MySqlCommand cmd = new MySqlCommand(searchStatementt, connection);
                 cmd.Parameters.AddWithValue("@query", $"%{query}%");
 
                 using (MySqlDataReader dataReader = cmd.ExecuteReader())
